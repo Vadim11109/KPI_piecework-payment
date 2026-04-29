@@ -278,14 +278,20 @@ select:focus {
   </div>
   <div class="step">
     <div class="step-num">2</div>
-    <div><div class="step-title">Норма SP по грейду</div>
-    <div class="step-desc">Для каждого грейда задаётся плановая норма story points за месяц (два спринта). Это «100% выполнение», за которое выплачивается полная сдельная часть.</div>
-    <table class="mini-table"><tr><th>Грейд</th><th>Норма SP/мес</th></tr><tr><td>Junior</td><td>20 SP</td></tr><tr><td>Middle</td><td>35 SP</td></tr><tr><td>Senior</td><td>45 SP</td></tr></table></div>
+    <div><div class="step-title">Норма оценочных часов по грейду</div>
+    <div class="step-desc">Единица учёта — <strong>оценочные часы закрытых задач</strong>: сумма предварительных оценок всех принятых задач за месяц. Не фактическое время, а вес выполненной работы. Норма задаётся по грейду — это «100% выполнение», за которое выплачивается полная сдельная часть.</div>
+    <table class="mini-table">
+      <tr><th>Грейд</th><th>Норма ч/мес</th><th>Из 160 раб. часов</th></tr>
+      <tr><td>Junior</td><td>80 ч</td><td class="muted">~50% — остальное: обучение, помощь, митинги</td></tr>
+      <tr><td>Middle</td><td>100 ч</td><td class="muted">~62% — остальное: ревью, грумминг, митинги</td></tr>
+      <tr><td>Senior</td><td>100 ч</td><td class="muted">~62% — остальное: архитектура, менторство, ревью</td></tr>
+    </table>
+    <div class="ex-box" style="margin-top:10px">Почему <strong>оценочные</strong>, а не фактические часы? Фактические стимулируют работать медленнее — больше часов = больше денег. Оценочные сохраняют стимул к скорости: сделал задачу за 5 ч вместо 8 — всё равно засчитывается 8.</div></div>
   </div>
   <div class="step">
     <div class="step-num">3</div>
     <div><div class="step-title">Коэффициент выполнения нормы</div>
-    <div class="step-desc">Фактические SP сравниваются с нормой. Коэффициент масштабирует сдельную часть:</div>
+    <div class="step-desc">Сумма оценочных часов закрытых задач сравнивается с нормой грейда. Коэффициент масштабирует сдельную часть:</div>
     <table class="mini-table">
       <tr><th>Выполнение</th><th>Коэффициент</th><th>Результат</th></tr>
       <tr><td>&lt; 70%</td><td>0</td><td>Сдельная = 0</td></tr>
@@ -301,8 +307,8 @@ select:focus {
     <div class="step-desc">Скорость без качества не считается результатом. Сдельная часть сокращается вдвое при нарушении хотя бы одного критерия.</div>
     <div class="filter-explain">
       <div class="fe-row fe-head"><div class="fe-c1">Критерий</div><div class="fe-c2">Что проверяется</div><div class="fe-c3">Зачем нужен</div></div>
-      <div class="fe-row"><div class="fe-c1">Bug rate ≤ 15%</div><div class="fe-c2">Доля задач с багами после закрытия — по данным Jira за месяц</div><div class="fe-c3">Защита от стратегии «закрыть формально» ради SP</div></div>
-      <div class="fe-row"><div class="fe-c1">Code review не формальный</div><div class="fe-c2">Ревьюер оставляет содержательные комментарии. Approve без комментариев на задаче ≥ 5 SP = нарушение</div><div class="fe-c3">Без этого ревью превращается в штамп, техдолг растёт незаметно</div></div>
+      <div class="fe-row"><div class="fe-c1">Bug rate ≤ 15%</div><div class="fe-c2">Доля задач с багами после закрытия — по данным Jira за месяц</div><div class="fe-c3">Защита от стратегии «закрыть формально» ради часов</div></div>
+      <div class="fe-row"><div class="fe-c1">Code review не формальный</div><div class="fe-c2">Ревьюер оставляет содержательные комментарии. Approve без комментариев на задаче ≥ 8 ч оценки = нарушение</div><div class="fe-c3">Без этого ревью превращается в штамп, техдолг растёт незаметно</div></div>
       <div class="fe-row"><div class="fe-c1">Возвраты ≤ 2 раз</div><div class="fe-c2">Задача, возвращённая на доработку более двух раз после передачи на тест</div><div class="fe-c3">Частые возвраты перекладывают затраты на QA и PM</div></div>
     </div>
     <div class="filter-result">
@@ -313,7 +319,7 @@ select:focus {
   <div class="step">
     <div class="step-num">5</div>
     <div><div class="step-title">Итоговая формула</div>
-    <div class="formula-box">Итого = <span>Фикс</span> + (<span>Макс. сдельная</span> × <span>К_sp</span> × <span>К_фильтр</span>)</div></div>
+    <div class="formula-box">Итого = <span>Фикс</span> + (<span>Макс. сдельная</span> × <span>К_часы</span> × <span>К_фильтр</span>)</div></div>
   </div>
 </div>
 
@@ -333,10 +339,10 @@ select:focus {
   </div>
   <div class="row">
     <label>Грейд</label>
-    <select id="grade" onchange="calc()" style="flex:1;padding:6px 8px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
-      <option value="20">Junior — норма 20 SP/спринт</option>
-      <option value="35" selected>Middle — норма 35 SP/спринт</option>
-      <option value="45">Senior — норма 45 SP/спринт</option>
+    <select id="grade" onchange="calc()" style="flex:1;padding:6px 8px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px">
+      <option value="80">Junior — норма 80 ч/мес</option>
+      <option value="100" selected>Middle — норма 100 ч/мес</option>
+      <option value="100s">Senior — норма 100 ч/мес</option>
     </select>
   </div>
   <div class="divider"></div>
@@ -347,6 +353,8 @@ select:focus {
     <div class="pcard active" id="pc2" onclick="setPerf(2)"><div class="pt">Норма</div><div class="pn" id="sp2">—</div><div class="pb pb-g">100%</div></div>
     <div class="pcard" id="pc3" onclick="setPerf(3)"><div class="pt">Перевыполнение</div><div class="pn" id="sp3">—</div><div class="pb pb-g">120%</div></div>
     <div class="pcard" id="pc4" onclick="setPerf(4)"><div class="pt">Кап</div><div class="pn" id="sp4">—</div><div class="pb pb-g">130%+</div></div>
+  </div>
+  <div class="note" style="margin-bottom:0">Цифры — оценочные часы закрытых задач за месяц</div>
   </div>
   <div class="divider"></div>
   <div class="section-title">Качественный фильтр</div>
@@ -375,8 +383,8 @@ select:focus {
     </div>
     <div class="acc-body" id="bd-a-p1">
       <div class="block"><div class="block-title">В чём плюс</div><div class="block-text">Сейчас разработчик получает оклад, практически не зависящий от его темпа. Связь между усилием и вознаграждением размытая и субъективная. Сдельная модель даёт формулу, которую можно проверить самостоятельно. Это снимает хронический источник недовольства у сильных сотрудников.</div></div>
-      <div class="block"><div class="block-title">Пример</div><div class="ex-box">Разработчик видит: закрыл 42 SP при норме 35, все фильтры пройдены — и сразу знает, что получит сдельную с коэффициентом 1.2. <strong>Никаких догадок, никаких разговоров с руководителем.</strong></div></div>
-      <div class="block"><div class="block-title">Ограничение</div><div class="block-text">Работает только если нормы SP воспринимаются как справедливые. Если норма завышена — прозрачность формулы превращается в прозрачность несправедливости.</div></div>
+      <div class="block"><div class="block-title">Пример</div><div class="ex-box">Middle-разработчик видит: закрыл задачи суммарным весом 118 ч при норме 100 ч, все фильтры пройдены — и сразу знает, что получит сдельную с коэффициентом 1.18. <strong>Никаких догадок, никаких разговоров с руководителем.</strong></div></div>
+      <div class="block"><div class="block-title">Ограничение</div><div class="block-text">Работает только если нормы часов воспринимаются как справедливые. Если норма завышена — прозрачность формулы превращается в прозрачность несправедливости.</div></div>
       <div class="tags"><span class="tag g">Реальный эффект</span><span class="tag g">Снижает скрытое недовольство</span></div>
     </div>
   </div>
@@ -482,18 +490,18 @@ select:focus {
 
 <div id="tab-minus" class="tab">
   <div class="section-title">Противоречия модели</div>
-  <div class="section-sub">П1–П3 и П5 — структурные: не решаются настройкой параметров модели, встроены в природу корпоративной продуктовой разработки.</div>
+  <div class="section-sub">П1–П3 и П5 — структурные: не решаются настройкой параметров модели, встроены в природу корпоративной продуктовой разработки. П7 — специфическое противоречие для команд без культуры оценки.</div>
 
   <div class="accordion" id="a-m1">
     <div class="acc-header" onclick="acc('a-m1')">
       <div class="acc-icon icon-red">П1</div>
-      <div class="acc-text"><div class="acc-title">Инфляция story points</div><div class="acc-sub">Инструмент планирования становится инструментом заработка — и перестаёт работать</div></div>
+      <div class="acc-text"><div class="acc-title">Инфляция оценок часов</div><div class="acc-sub">Инструмент планирования становится инструментом заработка — и перестаёт работать</div></div>
       <div class="acc-chev" id="ch-a-m1">▼</div>
     </div>
     <div class="acc-body" id="bd-a-m1">
-      <div class="block"><div class="block-title">Механизм</div><div class="block-text">Story points — относительная оценка сложности командой, не единица производительности. Их природа — субъективная, договорная. Как только SP получают денежный эквивалент, рациональное поведение команды меняется: оценка начинает учитывать желаемый доход, а не только сложность задачи.</div></div>
-      <div class="block"><div class="block-title">Как происходит на практике</div><div class="ex-box"><strong>До сдельщины:</strong> задача «добавить фильтр в таблицу» оценивается в 3 SP — объективно простая.<br><br><strong>После сдельщины:</strong> та же задача получает 5 SP — «там нужно проверить edge-cases и написать тест». Формально обоснование есть. Поймать накрутку почти невозможно, потому что planning poker — это консенсус команды.</div></div>
-      <div class="block"><div class="block-title">Почему сложно контролировать</div><div class="block-text">Нет внешнего эталона. Тимлид может чувствовать завышение, но оспорить без конфликта трудно. Со временем средняя оценка задачи растёт, velocity в SP формально держится, реальная скорость поставки не меняется. Планирование релизов ломается.</div></div>
+      <div class="block"><div class="block-title">Механизм</div><div class="block-text">Часовая оценка задачи — субъективное суждение разработчика о её сложности и объёме. Как только оценочные часы получают денежный эквивалент, рациональное поведение меняется: оценка начинает учитывать желаемый доход, а не только реальную трудоёмкость задачи.</div></div>
+      <div class="block"><div class="block-title">Как происходит на практике</div><div class="ex-box"><strong>До сдельщины:</strong> задача «добавить фильтр в таблицу» оценивается в 4 часа — объективно простая.<br><br><strong>После сдельщины:</strong> та же задача получает 8 часов — «там нужно проверить edge-cases, написать тест и обновить документацию». Формально обоснование есть. Поймать накрутку крайне сложно — оценка субъективна по природе.</div></div>
+      <div class="block"><div class="block-title">Почему сложно контролировать</div><div class="block-text">Нет внешнего эталона для часов точно так же, как нет его для SP. Тимлид может чувствовать завышение, но оспорить без конфликта трудно. Со временем средняя оценка задачи растёт, формальный объём «выполненных часов» держится — а реальная скорость поставки не меняется. Планирование ломается.</div></div>
       <div class="tags"><span class="tag r">Высокий риск</span><span class="tag r">Ломает планирование</span><span class="tag r">Сложно выявить</span><span class="tag r">Структурное</span></div>
     </div>
   </div>
@@ -505,7 +513,7 @@ select:focus {
       <div class="acc-chev" id="ch-a-m2">▼</div>
     </div>
     <div class="acc-body" id="bd-a-m2">
-      <div class="block"><div class="block-title">Что не учитывается в SP</div>
+      <div class="block"><div class="block-title">Что не попадает в оценочные часы закрытых задач</div>
       <table class="mini-table">
         <tr><th>Вид работы</th><th>Доля времени</th><th>Что теряется</th></tr>
         <tr><td>Code review</td><td class="muted">10–15%</td><td>Качество кода, передача знаний</td></tr>
@@ -583,20 +591,35 @@ select:focus {
     <div class="acc-body" id="bd-a-m6">
       <div class="block"><div class="block-title">Найм</div><div class="block-text">Рынок IT — рынок кандидата для опытных специалистов. Middle+ и Senior привыкли к чёткому фиксу или фикс + квартальная премия по KPI команды. Переменная часть, зависящая от SP, воспринимается как нестабильность. На этапе оффера часть сильных кандидатов откажется, не вникая в детали.</div></div>
       <div class="block"><div class="block-title">Удержание — асимметричный риск</div><div class="block-text">Первыми уйдут не те, кто работает медленно. Уйдут те, у кого есть выбор — лучшие. Senior, который берёт сложные задачи и видит, что зарабатывает меньше коллеги на простых CRUD-задачах, не будет это терпеть. Слабые останутся — у них меньше выбора. Команда инвертируется по составу.</div></div>
-      <div class="block"><div class="block-title">Правовой аспект</div><div class="block-text">ТК РФ допускает сдельную оплату, но требует чёткой фиксации норм выработки. Story points юридически уязвимы: нет объективного метода измерения, нет отраслевого стандарта. При трудовом споре суд встанет на сторону работника.</div></div>
+      <div class="block"><div class="block-title">Правовой аспект</div><div class="block-text">ТК РФ допускает сдельную оплату, но требует чёткой фиксации норм выработки. Оценочные часы юридически уязвимы: нет объективного метода измерения, нет отраслевого стандарта. При трудовом споре суд встанет на сторону работника.</div></div>
       <div class="tags"><span class="tag a">Средний риск найма</span><span class="tag r">Высокий риск удержания</span><span class="tag a">Правовая уязвимость</span></div>
+    </div>
+  </div>
+
+  <div class="accordion" id="a-m7">
+    <div class="acc-header" onclick="acc('a-m7')">
+      <div class="acc-icon icon-red">П7</div>
+      <div class="acc-text"><div class="acc-title">Единица измерения не существует как практика</div><div class="acc-sub">Команда оценивает в часах неформально — единой культуры оценки нет. Строить оплату на несуществующей практике опасно</div></div>
+      <div class="acc-chev" id="ch-a-m7">▼</div>
+    </div>
+    <div class="acc-body" id="bd-a-m7">
+      <div class="block"><div class="block-title">Текущая ситуация</div><div class="block-text">Сейчас оценки в часах используются для планирования спринта, но не являются строгой практикой с едиными правилами. Нет калиброванного представления о том, что такое «4 часа» или «16 часов» для задачи конкретного типа. Разные разработчики, тимлиды и аналитики дают принципиально разные оценки на одни и те же задачи.</div></div>
+      <div class="block"><div class="block-title">Что происходит при введении сдельщины</div><div class="ex-box"><strong>До сдельщины:</strong> разброс оценок — рабочая норма. Тимлид корректирует, договариваются, идут дальше.<br><br><strong>После сдельщины:</strong> каждая оценка — это деньги. Первые же planning-сессии превращаются в переговоры об оплате. Команда не обсуждает сложность задачи — она обсуждает, сколько часов «справедливо» поставить, чтобы выйти на норму.</div></div>
+      <div class="block"><div class="block-title">Почему это хуже, чем кажется</div><div class="block-text">В командах с зрелой SP-культурой инфляция оценок развивается за 3–6 месяцев. В командах без культуры оценки она начинается на втором спринте — просто потому что нет базы сравнения и нет ощущения «нормы». Любая оценка становится переговорной позицией.</div></div>
+      <div class="block"><div class="block-title">Что нужно сделать до запуска</div><div class="block-text">Минимум 2–3 месяца работы с оценками в формате, который будет использоваться в модели — без привязки к деньгам. За это время формируется исторический velocity, появляются эталонные задачи, тимлид видит паттерны завышения. Только после этого можно вводить финансовую привязку.</div></div>
+      <div class="tags"><span class="tag r">Критический риск</span><span class="tag r">Специфично для данной команды</span><span class="tag r">Требует решения до запуска</span></div>
     </div>
   </div>
 
   <div class="divider"></div>
   <div class="section-title">Итог по противоречиям</div>
   <div class="cards3">
-    <div class="scard red"><div class="scard-label">Критических (структурных)</div><div class="scard-val">4</div></div>
-    <div class="scard red"><div class="scard-label">Без решения в рамках модели</div><div class="scard-val">П1, П3, П5</div></div>
+    <div class="scard red"><div class="scard-label">Критических (структурных)</div><div class="scard-val">5</div></div>
+    <div class="scard red"><div class="scard-label">Без решения в рамках модели</div><div class="scard-val">П1, П3, П5, П7</div></div>
     <div class="scard amber"><div class="scard-label">Частично решаемых</div><div class="scard-val">П2, П4, П6</div></div>
   </div>
   <div class="verdict v-red">
-    <strong>Вывод для руководства:</strong> Три противоречия — инфляция SP, неравенство задач и ограниченный входящий поток — структурные и не решаются настройкой параметров. Модель может быть внедрена, но требует параллельного решения этих проблем — иначе через 3–6 месяцев скорость не вырастет, а качество и состав команды ухудшатся.
+    <strong>Вывод для руководства:</strong> Четыре противоречия — инфляция оценок, неравенство задач, ограниченный входящий поток и отсутствие культуры оценки — структурные и не решаются настройкой параметров. Особенно критично П7: запуск модели без предварительной калибровки оценок означает, что инфляция начнётся немедленно. Рекомендуется минимум 2–3 месяца пилота без финансовой привязки.
   </div>
 </div>
 
@@ -621,9 +644,9 @@ function calc(){
   document.getElementById('bvar').textContent='Сдельная '+vp+'%';
   const base=parseInt(document.getElementById('base').value);
   document.getElementById('base-val').textContent=base.toLocaleString('ru-RU');
-  const norm=parseInt(document.getElementById('grade').value);
+  const norm=parseInt(document.getElementById('grade').value)||100;
   const sps=[Math.floor(norm*.5),Math.floor(norm*.85),norm,Math.floor(norm*1.2),Math.floor(norm*1.3)];
-  ['sp0','sp1','sp2','sp3','sp4'].forEach((id,i)=>document.getElementById(id).textContent=sps[i]+' SP');
+  ['sp0','sp1','sp2','sp3','sp4'].forEach((id,i)=>document.getElementById(id).textContent=sps[i]+' ч');
   const fixAmt=base*(fp/100),maxVar=base*(vp/100);
   let c=coeffs[perfIdx];
   if(!filters.every(f=>f))c*=0.5;
